@@ -32,10 +32,9 @@ public class signup {
         String name = userDetails.getName();
         String email = userDetails.getEmail();
         String password = userDetails.getPassword();
-        String role = userDetails.getRole();
         String confirmPassword = userDetails.getConfirmPassword();
         
-        return createUser.user_creation(name, email, password, confirmPassword, role);
+        return createUser.user_creation(name, email, password, confirmPassword);
         
         
         

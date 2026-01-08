@@ -28,7 +28,7 @@ public class user {
     private String password;
 
     @Column(name = "role", nullable = false)
-    private String role;
+    private String role = "jobseeker";
 
     @Column(name = "is_profile_completed",nullable = false)
     private Boolean isProfileCompleted = false;

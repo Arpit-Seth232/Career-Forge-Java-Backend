@@ -32,11 +32,10 @@ public class createUser {
         this.userRepository = userRepository;
     }
 
-    public ResponseEntity<?> user_creation(String name, String email, String password, String confirmPassword,
-            String role) {
+    public ResponseEntity<?> user_creation(String name, String email, String password, String confirmPassword) {
         
         try{
-        if (name == null || email == null || password == null || role == null || confirmPassword == null) {
+        if (name == null || email == null || password == null || confirmPassword == null) {
             Map<String, String> response = new HashMap<>();
             response.put("isSuccess", "false");
             response.put("message", "Please provide all the fields");
@@ -64,7 +63,7 @@ public class createUser {
         new_user.setName(name);
         new_user.setEmail(email);
         new_user.setPassword(password);
-        new_user.setRole(role);
+        
 
         
         
