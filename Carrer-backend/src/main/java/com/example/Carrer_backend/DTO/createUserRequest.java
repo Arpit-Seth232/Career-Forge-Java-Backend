@@ -11,7 +11,7 @@ public class createUserRequest {
 
     private String confirmPassword;
     
-    private String role;
+    
     
     public String getName() {
         return name;
@@ -37,13 +37,6 @@ public class createUserRequest {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
     public String getConfirmPassword() {
         return confirmPassword;
