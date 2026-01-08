@@ -5,11 +5,11 @@ package com.example.Carrer_backend.Service;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.logging.structured.JsonWriterStructuredLogFormatter;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+
 import org.springframework.stereotype.Service;
 
 import com.example.Carrer_backend.Entity.user;
