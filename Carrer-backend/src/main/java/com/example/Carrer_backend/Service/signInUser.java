@@ -3,6 +3,7 @@ package com.example.Carrer_backend.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.time.Duration;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -70,17 +71,17 @@ public class signInUser {
             .path("/")
             .httpOnly(true)
             .sameSite("Lax")
-            .maxAge(1000 * 60 * 60 * 10)
+            .maxAge(Duration.ofHours(10))
             .build();
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
+            HttpHeaders header = new HttpHeaders();
+            header.add(HttpHeaders.SET_COOKIE, cookie.toString());
 
             Map<String, Object> response = new HashMap<>();
             response.put("isSuccess", "true");
             response.put("message", "User logged in successfully");
             response.put("data", user_details);
             
-            return ResponseEntity.ok().body(response);
+            return ResponseEntity.ok().headers(header).body(response);
             
         }
         catch(Exception e){

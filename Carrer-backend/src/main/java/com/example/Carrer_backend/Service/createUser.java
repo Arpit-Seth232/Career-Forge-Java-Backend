@@ -18,7 +18,7 @@ import com.example.Carrer_backend.Repository.userRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
-
+import java.time.Duration;
 import java.nio.charset.StandardCharsets;
 
 @Service
@@ -82,10 +82,10 @@ public class createUser {
         .path("/")
         .httpOnly(true)
         .sameSite("Lax")
-        .maxAge(1000 * 60 * 60 * 10)
+        .maxAge(Duration.ofHours(10))
         .build();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
+        HttpHeaders header = new HttpHeaders();
+        header.add(HttpHeaders.SET_COOKIE, cookie.toString());
         
         user saved_user = userRepository.save(new_user);
 
@@ -94,7 +94,7 @@ public class createUser {
         response.put("message", "User created successfully");
         response.put("data",saved_user);
 
-        return ResponseEntity.created(null).body(response);
+        return ResponseEntity.created(null).headers(header).body(response);
     }
     catch(Exception e){
         Map<String, String> response = new HashMap<>();
