@@ -1,0 +1,12 @@
+create Table users(
+	user_id Varchar PRIMARY KEY,
+	name Varchar(100) NOT NULL,
+	email Varchar(50) NOT NULL UNIQUE,
+	password Varchar(20) NOT NULL,
+	role Varchar NOT NULL,
+	is_profile_completed Boolean Default FALSE,
+	created_at TIMESTAMP Default CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP Default CURRENT_TIMESTAMP
+);
+
+select * from users;
