@@ -20,7 +20,7 @@ public class signin {
     }
     
     @PostMapping
-    public ResponseEntity<?> signin(@RequestBody signInRequest logInRequest){
+    public ResponseEntity<?> signin_user(@RequestBody signInRequest logInRequest){
 
         String email = logInRequest.getEmail();
         String password = logInRequest.getPassword();

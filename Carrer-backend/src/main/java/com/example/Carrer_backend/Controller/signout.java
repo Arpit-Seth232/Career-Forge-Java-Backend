@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.Carrer_backend.Service.signOutUser;
 
 @RestController
-@RequestMapping("/api/signout")
+@RequestMapping("/api/auth/signout")
 public class signout {
 
     private final signOutUser signOutUser;
@@ -18,7 +18,7 @@ public class signout {
     }
 
     @PostMapping
-    public ResponseEntity<?> signout(){
+    public ResponseEntity<?> signout_user(){
 
         return signOutUser.logout();
         

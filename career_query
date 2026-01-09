@@ -10,3 +10,8 @@ create Table users(
 );
 
 select * from users;
+
+delete from users where email='abc@example.com';
+
+alter table users
+alter column is_profile_completed SET NOT NULL;
