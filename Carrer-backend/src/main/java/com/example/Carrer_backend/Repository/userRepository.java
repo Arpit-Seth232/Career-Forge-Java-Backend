@@ -11,4 +11,5 @@ import com.example.Carrer_backend.Entity.user;
 public interface userRepository extends JpaRepository<user, String> {
     public boolean existsByEmail(String email);
     public Optional<user> findByEmail(String email);
+
 }

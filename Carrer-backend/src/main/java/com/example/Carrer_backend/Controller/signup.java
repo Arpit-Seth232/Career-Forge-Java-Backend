@@ -26,7 +26,7 @@ public class signup {
     }
 
     @PostMapping
-    public ResponseEntity<?> signup(@RequestBody createUserRequest userDetails) {
+    public ResponseEntity<?> signup_user(@RequestBody createUserRequest userDetails) {
 
         
         String name = userDetails.getName();
