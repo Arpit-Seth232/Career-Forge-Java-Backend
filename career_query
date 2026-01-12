@@ -15,3 +15,20 @@ delete from users where email='abc@example.com';
 
 alter table users
 alter column is_profile_completed SET NOT NULL;
+
+Create Table jobseekers(
+	user_id VARCHAR PRIMARY KEY,
+	full_name VARCHAR(30) NOT NULL,
+	profile_picture VARCHAR(100),
+	year_of_experience VARCHAR(20) NOT NULL,
+	bio TEXT,
+	preferred_roles VARCHAR(100) NOT NULL,
+	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_jobseekers
+	FOREIGN KEY(user_id)
+	REFERENCES users(user_id)
+	ON DELETE CASCADE
+);
+
+select * from jobseekers;
