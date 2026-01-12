@@ -34,7 +34,8 @@ public class setJobseekerProfile {
             List<String> preferredRoles = updateJobseekerProfileRequest.getPreferredRoles();
             
             String userId = (String) request.getAttribute("userId");
-            String email = (String) request.getAttribute("email");
+
+            // String email = (String) request.getAttribute("email");
 
             return createJobseekerProfile.update_jobseeker_profile(fullName, profilePicture, yearOfExperience, bio, preferredRoles, userId);
 
