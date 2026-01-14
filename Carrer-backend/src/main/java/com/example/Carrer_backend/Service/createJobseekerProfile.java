@@ -2,6 +2,7 @@ package com.example.Carrer_backend.Service;
 
 import java.util.*;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -81,9 +82,9 @@ public class createJobseekerProfile {
                 jobseeker newUser = new jobseeker();
 
                 user alreadyExistingUser = userRepository.findById(userId).get();
-                
+
                 newUser.setPersonalDetails(alreadyExistingUser);
-                
+
                 newUser.setFullName(fullName);
                 if (profilePicture != null)
                     newUser.setProfilePicture(profilePicture);
@@ -91,7 +92,6 @@ public class createJobseekerProfile {
                 if (bio != null)
                     newUser.setBio(bio);
                 newUser.setPreferredRoles(preferredRoles);
-
 
                 alreadyExistingUser.setIsProfileCompleted(true);
 
