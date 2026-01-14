@@ -25,10 +25,83 @@ Create Table jobseekers(
 	preferred_roles VARCHAR(100) NOT NULL,
 	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	CONSTRAINT fk_jobseekers
+	CONSTRAI
+);
+
+select * from jobseekers;
+
+alter Table jobseekers
+Drop COLUMN preferred_roles;
+
+
+CREATE TABLE preferred_roles (
+    user_id VARCHAR NOT NULL,
+    role VARCHAR(100) NOT NULL,
+    PRIMARY KEY (user_id, role),
+    CONSTRAINT fk_user
+      FOREIGN KEY (user_id)
+      REFERENCES jobseekers(user_id)
+      ON DELETE CASCADE
+);
+
+select * from preferred_roles;
+
+delete from jobseekers where user_id = 'a660d452-4024-4490-8a1e-990fdfdcaf57';
+
+
+CREATE TABLE RECRUITER(
+	user_id VARCHAR PRIMARY KEY,
+	full_name VARCHAR(30) NOT NULL,
+	profile_picture VARCHAR(100),
+	company_name VARCHAR(50) NOT NULL,
+	job_title VARCHAR(50) NOT NULL,
+	company_size VARCHAR(20) NOT NULL,
+	industry VARCHAR(50) NOT NULL,
+	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_recruiter
 	FOREIGN KEY(user_id)
 	REFERENCES users(user_id)
 	ON DELETE CASCADE
 );
 
-select * from jobseekers;
+select * from recruiter;
+
+CREATE TABLE Mentors(
+	user_id VARCHAR PRIMARY KEY,
+	full_name VARCHAR(30) NOT NULL,
+	profile_picture VARCHAR(100),
+	year_of_mentoring VARCHAR(20) NOT NULL,
+	bio TEXT,
+	created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT fk_mentor
+	FOREIGN KEY(user_id)
+	REFERENCES users(user_id)
+	ON DELETE CASCADE
+);
+
+CREATE TABLE expertise (
+    user_id VARCHAR NOT NULL,
+    field VARCHAR(100) NOT NULL,
+    PRIMARY KEY (user_id, field),
+    CONSTRAINT fk_user
+      FOREIGN KEY (user_id)
+      REFERENCES jobseekers(user_id)
+      ON DELETE CASCADE
+);
+
+select * from mentors;
+
+alter Table expertise
+Drop CONSTRAINT fk_user;
+
+alter Table expertise
+ADD CONSTRAINT fk_user
+FOREIGN KEY (user_id)
+      REFERENCES mentors(user_id)
+      ON DELETE CASCADE;
+
+select * from expertise;
+
+
