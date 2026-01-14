@@ -2,7 +2,6 @@ package com.example.Carrer_backend.Service;
 
 import java.util.*;
 
-
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,9 +19,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import jakarta.transaction.Transactional;
 
-
-
-
 @Transactional
 @Service
 public class uploadResume {
@@ -33,7 +29,8 @@ public class uploadResume {
 
     private final ObjectMapper objectMapper;
 
-    public uploadResume(GeminiService geminiService, resumeRepository resumeRepository, userRepository userRepository, ObjectMapper objectMapper) {
+    public uploadResume(GeminiService geminiService, resumeRepository resumeRepository, userRepository userRepository,
+            ObjectMapper objectMapper) {
         this.geminiService = geminiService;
         this.resumeRepository = resumeRepository;
         this.userRepository = userRepository;
@@ -65,8 +62,6 @@ public class uploadResume {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            
-
             byte[] resumeBytes = resume.getBytes();
             String resumeBase64 = Base64.getEncoder().encodeToString(resumeBytes);
 
@@ -92,8 +87,6 @@ public class uploadResume {
 
                 String responseStr = geminiService.call_gemini(resumeBase64);
 
-                
-
                 String jsonStr = jsonExtractor.extractJson(responseStr);
 
                 if (existingUser == null) {
@@ -103,12 +96,7 @@ public class uploadResume {
                     return ResponseEntity.badRequest().body(response);
                 }
 
-                
-
-                
                 JsonNode jsonNode = objectMapper.readTree(jsonStr);
-
-                
 
                 resume newResume = new resume();
                 newResume.setId(resumeEmbeddedId);
@@ -117,10 +105,10 @@ public class uploadResume {
 
                 resume savedResume = resumeRepository.save(newResume);
 
-            ObjectNode resultMap = objectMapper.createObjectNode();
-            resultMap.put("isSuccess", "true");
-            resultMap.put("message", "Resume uploaded successfully");
-            resultMap.set("data", savedResume.getResumeContent());
+                ObjectNode resultMap = objectMapper.createObjectNode();
+                resultMap.put("isSuccess", "true");
+                resultMap.put("message", "Resume uploaded successfully");
+                resultMap.set("data", savedResume.getResumeContent());
 
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(resultMap);
             }
