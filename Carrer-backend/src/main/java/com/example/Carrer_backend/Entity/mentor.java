@@ -18,6 +18,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "mentors")
 public class mentor {
@@ -29,6 +31,7 @@ public class mentor {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",nullable = false)
     @MapsId
+    @JsonIgnore
     private user PersonalDetails;
 
     @Column(name = "full_name", nullable = false, length = 30)

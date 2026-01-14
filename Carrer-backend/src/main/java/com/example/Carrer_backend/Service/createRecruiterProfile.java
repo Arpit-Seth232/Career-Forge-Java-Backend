@@ -21,19 +21,21 @@ public class createRecruiterProfile {
         this.recruiterRepository = recruiterRepository;
     }
 
-    public ResponseEntity<?> create_recruiter_profile(String userId, String fullName, String companyName, String profilePicture, String jobTitle, String companySize, String industry){
+    public ResponseEntity<?> create_recruiter_profile(String userId, String fullName, String companyName,
+            String profilePicture, String jobTitle, String companySize, String industry) {
 
-        try{
-            
-            if(fullName == null || companyName == null || jobTitle == null || companySize == null || industry == null){
-                
+        try {
+
+            if (fullName == null || companyName == null || jobTitle == null || companySize == null
+                    || industry == null) {
+
                 Map<String, String> response = new HashMap<>();
                 response.put("isSuccess", "false");
                 response.put("message", "All fields are required");
                 return ResponseEntity.badRequest().body(response);
             }
 
-            if(userId == null){
+            if (userId == null) {
                 Map<String, String> response = new HashMap<>();
                 response.put("isSuccess", "false");
                 response.put("message", "User ID not found");
@@ -42,8 +44,7 @@ public class createRecruiterProfile {
 
             Optional<recruiter> userDetails = recruiterRepository.findById(userId);
 
-
-            if(userDetails.isPresent()){
+            if (userDetails.isPresent()) {
 
                 recruiter existingUser = userDetails.get();
 
@@ -69,7 +70,7 @@ public class createRecruiterProfile {
                 return ResponseEntity.ok().body(response);
             }
 
-            else{
+            else {
 
                 recruiter newUser = new recruiter();
 
@@ -77,7 +78,8 @@ public class createRecruiterProfile {
 
                 newUser.setPersonalDetails(alreadyExistingUser);
                 newUser.setFullName(fullName);
-                if(profilePicture != null)newUser.setProfilePicture(profilePicture);
+                if (profilePicture != null)
+                    newUser.setProfilePicture(profilePicture);
                 newUser.setJobTitle(jobTitle);
                 newUser.setCompanySize(companySize);
                 newUser.setIndustry(industry);
@@ -95,15 +97,12 @@ public class createRecruiterProfile {
                 return ResponseEntity.ok().body(response);
             }
 
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
             response.put("isSuccess", "false");
             response.put("message", "Error updating profile completion status " + e.getMessage());
             return ResponseEntity.internalServerError().body(response);
-        
-    
-    
-}
-}
+
+        }
+    }
 }
