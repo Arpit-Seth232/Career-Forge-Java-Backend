@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.Carrer_backend.Entity.user;
 import com.example.Carrer_backend.Repository.userRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -23,37 +25,39 @@ public class signInUser {
 
     @Value("${jwt.secret}")
     private String secret;
+    private final ObjectMapper objectMapper;
     
     private final userRepository userRepository;
 
-    public signInUser(userRepository userRepository) {
+    public signInUser(userRepository userRepository, ObjectMapper objectMapper) {
         this.userRepository = userRepository;
+        this.objectMapper = objectMapper;
     }
 
-    public ResponseEntity<?> validateUser(String email, String password) {
+    public ResponseEntity<JsonNode> validateUser(String email, String password) {
         try{
             if(email == null || password == null){
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "Please provide all the fields");
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "false")
+                        .put("message", "Please provide all the fields");
                 return ResponseEntity.badRequest().body(response);
             }
 
             Optional<user> existed_user = userRepository.findByEmail(email);
         
             if(existed_user.isEmpty()){
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "User not found");
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "false")
+                        .put("message", "User not found");
                 return ResponseEntity.badRequest().body(response);
             }
 
             user user_details = existed_user.get();
 
             if(!user_details.getPassword().equals(password)){
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "Invalid password");
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "false")
+                        .put("message", "Invalid password");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -76,19 +80,19 @@ public class signInUser {
             HttpHeaders header = new HttpHeaders();
             header.add(HttpHeaders.SET_COOKIE, cookie.toString());
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("isSuccess", "true");
-            response.put("message", "User logged in successfully");
-            response.put("data", user_details);
+            JsonNode response = objectMapper.createObjectNode()
+                    .put("isSuccess", "true")
+                    .put("message", "User logged in successfully")
+                    .set("data", objectMapper.valueToTree(user_details));
             
             return ResponseEntity.ok().headers(header).body(response);
             
         }
         catch(Exception e){
-            Map<String, String> response = new HashMap<>();
-            response.put("isSuccess", "false");
-            response.put("message", "Internal Server Error");
-            response.put("error",e.getMessage());
+            JsonNode response = objectMapper.createObjectNode()
+                    .put("isSuccess", "false")
+                    .put("message", "Internal Server Error")
+                    .put("error",e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
     }

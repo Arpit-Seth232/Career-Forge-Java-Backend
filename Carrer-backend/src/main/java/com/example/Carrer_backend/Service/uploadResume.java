@@ -116,7 +116,8 @@ public class uploadResume {
         } catch (Exception e) {
             ObjectNode response = objectMapper.createObjectNode();
             response.put("isSuccess", "false");
-            response.put("message", "Error uploading resume " + e.getMessage());
+            response.put("message", "Error uploading resume ");
+            response.put("error", e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
     }

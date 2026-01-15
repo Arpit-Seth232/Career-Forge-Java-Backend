@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Carrer_backend.DTO.updateRecruiterProfileRequest;
 import com.example.Carrer_backend.Service.createRecruiterProfile;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-import java.util.*;
 
 @RestController
 @RequestMapping("/api/auth/recruiter/profile")
@@ -24,12 +24,12 @@ public class setRecruiterProfile {
     }
 
     @PostMapping
-    public ResponseEntity<?> update_recruiter_profile(@RequestBody
+    public ResponseEntity<JsonNode> update_recruiter_profile(@RequestBody
         updateRecruiterProfileRequest updateRecruiterProfileRequest,
         HttpServletRequest request
     ){
         
-        try{
+        
 
             String userId = request.getAttribute("userId").toString();
             String fullName = updateRecruiterProfileRequest.getFullName();
@@ -43,13 +43,8 @@ public class setRecruiterProfile {
         return createRecruiterProfile.create_recruiter_profile(userId, fullName, companyName, profilePicture, jobTitle, companySize, industry);
             
             
-        }
-        catch(Exception e){
-            Map<String, String> response = new HashMap<>();
-            response.put("isSuccess", "false");
-            response.put("message", "Error updating profile completion status " + e.getMessage());
-            return ResponseEntity.internalServerError().body(response);
-        }
+        
+       
 
     }
     

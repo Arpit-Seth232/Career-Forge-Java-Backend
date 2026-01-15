@@ -3,22 +3,26 @@ package com.example.Carrer_backend.Service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+
 
 import com.example.Carrer_backend.Entity.user;
 import com.example.Carrer_backend.Repository.userRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class updateRole {
 
     private userRepository userRepository;
+    private final ObjectMapper objectMapper;
 
-    public updateRole(userRepository userRepository) {
+    public updateRole(userRepository userRepository, ObjectMapper objectMapper) {
         this.userRepository = userRepository;
+        this.objectMapper = objectMapper;
     }
 
     
-    public ResponseEntity<?> updateRole_user(String userId, String role){
+    public ResponseEntity<JsonNode> updateRole_user(String userId, String role){
         try{
             
             user user_details = userRepository.findById(userId).get();
@@ -26,18 +30,18 @@ public class updateRole {
             user_details.setRole(role);
             userRepository.save(user_details);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("isSuccess", "true");
-            response.put("message", "User role updated successfully");
-            response.put("data", user_details);
+            JsonNode response = objectMapper.createObjectNode()
+                    .put("isSuccess", "true")
+                    .put("message", "User role updated successfully")
+                    .set("data", objectMapper.valueToTree(user_details));
             
             return ResponseEntity.ok().body(response);
         }
         catch(Exception e){
-            Map<String, String> response = new HashMap<>();
-            response.put("isSuccess", "false");
-            response.put("message", "Internal Server Error");
-            response.put("error",e.getMessage());
+            JsonNode response = objectMapper.createObjectNode()
+                    .put("isSuccess", "false")
+                    .put("message", "Internal Server Error")
+                    .put("error",e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
     }

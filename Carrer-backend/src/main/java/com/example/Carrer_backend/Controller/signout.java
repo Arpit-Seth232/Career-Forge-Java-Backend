@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Carrer_backend.Service.signOutUser;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping("/api/auth/signout")
@@ -18,8 +19,7 @@ public class signout {
     }
 
     @PostMapping
-    public ResponseEntity<?> signout_user(){
-
+    public ResponseEntity<JsonNode> signout_user(){
         return signOutUser.logout();
         
     }

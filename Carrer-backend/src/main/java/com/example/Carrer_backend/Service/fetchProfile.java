@@ -12,6 +12,8 @@ import com.example.Carrer_backend.Repository.jobseekerRepository;
 import com.example.Carrer_backend.Repository.mentorRepository;
 import com.example.Carrer_backend.Repository.recruiterRepository;
 import com.example.Carrer_backend.Repository.userRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class fetchProfile {
@@ -19,25 +21,27 @@ public class fetchProfile {
     private final userRepository userRepository;
     private final jobseekerRepository jobseekerRepository;
     private final recruiterRepository recruiterRepository;
-    private final mentorRepository mentorRepository;    
+    private final mentorRepository mentorRepository;
+    private final ObjectMapper objectMapper;    
 
-    public fetchProfile(userRepository userRepository, jobseekerRepository jobseekerRepository, recruiterRepository recruiterRepository, mentorRepository mentorRepository) {
+    public fetchProfile(userRepository userRepository, jobseekerRepository jobseekerRepository, recruiterRepository recruiterRepository, mentorRepository mentorRepository, ObjectMapper objectMapper) {
         this.userRepository = userRepository;
         this.jobseekerRepository = jobseekerRepository;
         this.recruiterRepository = recruiterRepository;
         this.mentorRepository = mentorRepository;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping
-    public ResponseEntity<?> getProfile(String userId){
+    public ResponseEntity<JsonNode> getProfile(String userId){
 
         try{
 
             if(userId == null){
 
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "User ID not found");
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "false")
+                        .put("message", "User ID not found");
                 return ResponseEntity.badRequest().body(response);
                 
             }
@@ -55,10 +59,10 @@ public class fetchProfile {
 
                     Optional<jobseeker> jobseeker = jobseekerRepository.findById(userId);
 
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("isSuccess", "true");
-                    response.put("message", "Profile fetched successfully");
-                    response.put("data", jobseeker.get());
+                    JsonNode response = objectMapper.createObjectNode()
+                            .put("isSuccess", "true")
+                            .put("message", "Profile fetched successfully")
+                            .set("data", objectMapper.valueToTree(jobseeker.get()));
                     return ResponseEntity.ok().body(response);
 
                 }
@@ -67,10 +71,10 @@ public class fetchProfile {
 
                     Optional<recruiter> recruiter = recruiterRepository.findById(userId);
 
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("isSuccess", "true");
-                    response.put("message", "Profile fetched successfully");
-                    response.put("data", recruiter.get());
+                    JsonNode response = objectMapper.createObjectNode()
+                            .put("isSuccess", "true")
+                            .put("message", "Profile fetched successfully")
+                            .set("data", objectMapper.valueToTree(recruiter.get()));
                     return ResponseEntity.ok().body(response);
                     
                 }
@@ -79,10 +83,10 @@ public class fetchProfile {
 
                     Optional<mentor> mentor = mentorRepository.findById(userId);
 
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("isSuccess", "true");
-                    response.put("message", "Profile fetched successfully");
-                    response.put("data", mentor.get());
+                    JsonNode response = objectMapper.createObjectNode()
+                            .put("isSuccess", "true")
+                            .put("message", "Profile fetched successfully")
+                            .set("data", objectMapper.valueToTree(mentor.get()));
                     return ResponseEntity.ok().body(response);
                     
                 }
@@ -90,9 +94,9 @@ public class fetchProfile {
             }
             else{
 
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "User ID not found");
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "false")
+                        .put("message", "user mapped to invalid role");
                 return ResponseEntity.badRequest().body(response);
                 
             }
@@ -100,9 +104,10 @@ public class fetchProfile {
         }
         catch(Exception e){
 
-            Map<String, String> response = new HashMap<>();
-            response.put("isSuccess", "false");
-            response.put("message", "Error fetching profile " + e.getMessage());
+            JsonNode response = objectMapper.createObjectNode()
+                    .put("isSuccess", "false")
+                    .put("message", "Error fetching profile ")
+                    .put("error", e.getMessage());
             return ResponseEntity.internalServerError().body(response);
             
         }
