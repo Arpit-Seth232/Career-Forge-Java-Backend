@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.Carrer_backend.DTO.createUserRequest;
 
 import com.example.Carrer_backend.Service.createUser;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping("/api/signup")
@@ -26,7 +27,7 @@ public class signup {
     }
 
     @PostMapping
-    public ResponseEntity<?> signup_user(@RequestBody createUserRequest userDetails) {
+    public ResponseEntity<JsonNode> signup_user(@RequestBody createUserRequest userDetails) {
 
         
         String name = userDetails.getName();

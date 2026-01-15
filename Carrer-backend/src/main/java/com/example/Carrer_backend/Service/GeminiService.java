@@ -20,7 +20,7 @@ public class GeminiService {
     private static final String MODEL = "gemini-2.5-flash";
 
 
-    public String call_gemini(String resumeBase64) {
+    public String call_gemini(String resumeBase64) throws Exception {
         try {
             byte[] resumeBytes = Base64.getDecoder().decode(resumeBase64);
 
@@ -37,114 +37,114 @@ public class GeminiService {
                                 "6. Scores must be realistic and consistent with resume content.\n" + //
                                 "7. JSON must be parseable directly by standard JSON parsers (Jackson / Gson).\n" + //
                                 ""+ "Analyze the following resume content and extract structured information.\n" + //
-                                                                        "\n" + //
-                                                                        "Resume Content:\n" + //
-                                                                        "{{RESUME_TEXT_OR_BASE64_EXTRACTED_TEXT}}\n" + //
-                                                                        "\n" + //
-                                                                        "Return the response strictly in the following JSON structure:\n" + //
-                                                                        "\n" + //
-                                                                        "{\n" + //
-                                                                        "  \"basic_info\": {\n" + //
-                                                                        "    \"full_name\": \"\",\n" + //
-                                                                        "    \"email\": \"\",\n" + //
-                                                                        "    \"phone\": \"\",\n" + //
-                                                                        "    \"location\": \"\",\n" + //
-                                                                        "    \"linkedin\": \"\",\n" + //
-                                                                        "    \"github\": \"\",\n" + //
-                                                                        "    \"portfolio\": \"\"\n" + //
-                                                                        "  },\n" + //
-                                                                        "\n" + //
-                                                                        "  \"professional_summary\": \"\",\n" + //
-                                                                        "\n" + //
-                                                                        "  \"skills\": {\n" + //
-                                                                        "    \"programming_languages\": [],\n" + //
-                                                                        "    \"frameworks\": [],\n" + //
-                                                                        "    \"databases\": [],\n" + //
-                                                                        "    \"tools\": [],\n" + //
-                                                                        "    \"cloud_and_devops\": [],\n" + //
-                                                                        "    \"other_skills\": []\n" + //
-                                                                        "  },\n" + //
-                                                                        "\n" + //
-                                                                        "  \"experience\": [\n" + //
-                                                                        "    {\n" + //
-                                                                        "      \"job_title\": \"\",\n" + //
-                                                                        "      \"company\": \"\",\n" + //
-                                                                        "      \"location\": \"\",\n" + //
-                                                                        "      \"employment_type\": \"\",\n" + //
-                                                                        "      \"start_date\": \"\",\n" + //
-                                                                        "      \"end_date\": \"\",\n" + //
-                                                                        "      \"responsibilities\": [],\n" + //
-                                                                        "      \"technologies_used\": []\n" + //
-                                                                        "    }\n" + //
-                                                                        "  ],\n" + //
-                                                                        "\n" + //
-                                                                        "  \"projects\": [\n" + //
-                                                                        "    {\n" + //
-                                                                        "      \"project_name\": \"\",\n" + //
-                                                                        "      \"description\": \"\",\n" + //
-                                                                        "      \"technologies_used\": [],\n" + //
-                                                                        "      \"outcomes\": \"\"\n" + //
-                                                                        "    }\n" + //
-                                                                        "  ],\n" + //
-                                                                        "\n" + //
-                                                                        "  \"education\": [\n" + //
-                                                                        "    {\n" + //
-                                                                        "      \"degree\": \"\",\n" + //
-                                                                        "      \"field_of_study\": \"\",\n" + //
-                                                                        "      \"institution\": \"\",\n" + //
-                                                                        "      \"start_year\": \"\",\n" + //
-                                                                        "      \"end_year\": \"\",\n" + //
-                                                                        "      \"grade_or_cgpa\": \"\"\n" + //
-                                                                        "    }\n" + //
-                                                                        "  ],\n" + //
-                                                                        "\n" + //
-                                                                        "  \"certifications\": [\n" + //
-                                                                        "    {\n" + //
-                                                                        "      \"name\": \"\",\n" + //
-                                                                        "      \"issued_by\": \"\",\n" + //
-                                                                        "      \"year\": \"\"\n" + //
-                                                                        "    }\n" + //
-                                                                        "  ],\n" + //
-                                                                        "\n" + //
-                                                                        "  \"achievements\": [],\n" + //
-                                                                        "\n" + //
-                                                                        "  \"ats_analysis\": {\n" + //
-                                                                        "    \"overall_ats_score\": {\n" + //
-                                                                        "      \"score\": 0,\n" + //
-                                                                        "      \"out_of\": 100\n" + //
-                                                                        "    },\n" + //
-                                                                        "    \"keyword_coverage\": \"LOW | MEDIUM | HIGH\",\n" + //
-                                                                        "    \"formatting_quality\": \"POOR | AVERAGE | GOOD | EXCELLENT\",\n" + //
-                                                                        "    \"readability_score\": \"LOW | MEDIUM | HIGH\",\n" + //
-                                                                        "    \"missing_critical_sections\": []\n" + //
-                                                                        "  },\n" + //
-                                                                        "\n" + //
-                                                                        "  \"profile_evaluation\": {\n" + //
-                                                                        "    \"overall_profile_score\": {\n" + //
-                                                                        "      \"score\": 0,\n" + //
-                                                                        "      \"out_of\": 100\n" + //
-                                                                        "    },\n" + //
-                                                                        "    \"strengths\": [],\n" + //
-                                                                        "    \"weaknesses\": []\n" + //
-                                                                        "  },\n" + //
-                                                                        "\n" + //
-                                                                        "  \"recommendations\": {\n" + //
-                                                                        "    \"suggestions_to_enhance\": [\n" + //
-                                                                        "      {\n" + //
-                                                                        "        \"area\": \"\",\n" + //
-                                                                        "        \"recommendation\": \"\"\n" + //
-                                                                        "      }\n" + //
-                                                                        "    ],\n" + //
-                                                                        "    \"suggested_roles\": []\n" + //
-                                                                        "  }\n" + //
-                                                                        "}\n" + //
-                                                                        "\n" + //
-                                                                        "Guidelines:\n" + //
-                                                                        "- ATS score reflects keyword relevance, formatting, and role alignment.\n" + //
-                                                                        "- Profile score reflects experience depth, skill strength, and project impact.\n" + //
-                                                                        "- Suggestions must be actionable and specific.\n" + //
-                                                                        "- Suggested roles must match the candidate's skills and experience level.\n" + //
-                                                                        "";
+                                "\n" + //
+                                "Resume Content:\n" + //
+                                "{{RESUME_TEXT_OR_BASE64_EXTRACTED_TEXT}}\n" + //
+                                "\n" + //
+                                "Return the response strictly in the following JSON structure:\n" + //
+                                "\n" + //
+                                "{\n" + //
+                                "  \"basic_info\": {\n" + //
+                                "    \"full_name\": \"\",\n" + //
+                                "    \"email\": \"\",\n" + //
+                                "    \"phone\": \"\",\n" + //
+                                "    \"location\": \"\",\n" + //
+                                "    \"linkedin\": \"\",\n" + //
+                                "    \"github\": \"\",\n" + //
+                                "    \"portfolio\": \"\"\n" + //
+                                "  },\n" + //
+                                "\n" + //
+                                "  \"professional_summary\": \"\",\n" + //
+                                "\n" + //
+                                "  \"skills\": {\n" + //
+                                "    \"programming_languages\": [],\n" + //
+                                "    \"frameworks\": [],\n" + //
+                                "    \"databases\": [],\n" + //
+                                "    \"tools\": [],\n" + //
+                                "    \"cloud_and_devops\": [],\n" + //
+                                "    \"other_skills\": []\n" + //
+                                "  },\n" + //
+                                "\n" + //
+                                "  \"experience\": [\n" + //
+                                "    {\n" + //
+                                "      \"job_title\": \"\",\n" + //
+                                "      \"company\": \"\",\n" + //
+                                "      \"location\": \"\",\n" + //
+                                "      \"employment_type\": \"\",\n" + //
+                                "      \"start_date\": \"\",\n" + //
+                                "      \"end_date\": \"\",\n" + //
+                                "      \"responsibilities\": [],\n" + //
+                                "      \"technologies_used\": []\n" + //
+                                "    }\n" + //
+                                "  ],\n" + //
+                                "\n" + //
+                                "  \"projects\": [\n" + //
+                                "    {\n" + //
+                                "      \"project_name\": \"\",\n" + //
+                                "      \"description\": \"\",\n" + //
+                                "      \"technologies_used\": [],\n" + //
+                                "      \"outcomes\": \"\"\n" + //
+                                "    }\n" + //
+                                "  ],\n" + //
+                                "\n" + //
+                                "  \"education\": [\n" + //
+                                "    {\n" + //
+                                "      \"degree\": \"\",\n" + //
+                                "      \"field_of_study\": \"\",\n" + //
+                                "      \"institution\": \"\",\n" + //
+                                "      \"start_year\": \"\",\n" + //
+                                "      \"end_year\": \"\",\n" + //
+                                "      \"grade_or_cgpa\": \"\"\n" + //
+                                "    }\n" + //
+                                "  ],\n" + //
+                                "\n" + //
+                                "  \"certifications\": [\n" + //
+                                "    {\n" + //
+                                "      \"name\": \"\",\n" + //
+                                "      \"issued_by\": \"\",\n" + //
+                                "      \"year\": \"\"\n" + //
+                                "    }\n" + //
+                                "  ],\n" + //
+                                "\n" + //
+                                "  \"achievements\": [],\n" + //
+                                "\n" + //
+                                "  \"ats_analysis\": {\n" + //
+                                "    \"overall_ats_score\": {\n" + //
+                                "      \"score\": 0,\n" + //
+                                "      \"out_of\": 100\n" + //
+                                "    },\n" + //
+                                "    \"keyword_coverage\": \"LOW | MEDIUM | HIGH\",\n" + //
+                                "    \"formatting_quality\": \"POOR | AVERAGE | GOOD | EXCELLENT\",\n" + //
+                                "    \"readability_score\": \"LOW | MEDIUM | HIGH\",\n" + //
+                                "    \"missing_critical_sections\": []\n" + //
+                                "  },\n" + //
+                                "\n" + //
+                                "  \"profile_evaluation\": {\n" + //
+                                "    \"overall_profile_score\": {\n" + //
+                                "      \"score\": 0,\n" + //
+                                "      \"out_of\": 100\n" + //
+                                "    },\n" + //
+                                "    \"strengths\": [],\n" + //
+                                "    \"weaknesses\": []\n" + //
+                                "  },\n" + //
+                                "\n" + //
+                                "  \"recommendations\": {\n" + //
+                                "    \"suggestions_to_enhance\": [\n" + //
+                                "      {\n" + //
+                                "        \"area\": \"\",\n" + //
+                                "        \"recommendation\": \"\"\n" + //
+                                "      }\n" + //
+                                "    ],\n" + //
+                                "    \"suggested_roles\": []\n" + //
+                                "  }\n" + //
+                                "}\n" + //
+                                "\n" + //
+                                "Guidelines:\n" + //
+                                "- ATS score reflects keyword relevance, formatting, and role alignment.\n" + //
+                                "- Profile score reflects experience depth, skill strength, and project impact.\n" + //
+                                "- Suggestions must be actionable and specific.\n" + //
+                                "- Suggested roles must match the candidate's skills and experience level.\n" + //
+                                "";
 
             Client client = Client.builder()
                     .apiKey(apiKey)
@@ -162,7 +162,7 @@ public class GeminiService {
             return response.text();
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error: " + e.getMessage();
+            throw new RuntimeException("Error: " + e.getMessage());
         }
     }
 }

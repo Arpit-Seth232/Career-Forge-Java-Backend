@@ -2,17 +2,25 @@ package com.example.Carrer_backend.Service;
 
 
 
-import java.util.*;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class signOutUser {
 
-    public ResponseEntity<?> logout(){
+    private final ObjectMapper objectMapper;
+
+    public signOutUser(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    public ResponseEntity<JsonNode> logout(){
         
         try{
         // clear the cookie
@@ -26,19 +34,19 @@ public class signOutUser {
         HttpHeaders header = new HttpHeaders();
         header.add(HttpHeaders.SET_COOKIE, delete_cookie.toString());
 
-        Map<String, String> response = new HashMap<>();
-        response.put("isSuccess", "true");
-        response.put("message", "User logged out successfully");
+        JsonNode response = objectMapper.createObjectNode()
+                .put("isSuccess", "true")
+                .put("message", "User logged out successfully");
 
 
         return ResponseEntity.ok().headers(header).body(response);
 
         }
         catch(Exception e){
-            Map<String, String> response = new HashMap<>();
-            response.put("isSuccess", "false");
-            response.put("message", "Internal Server Error");
-            response.put("error",e.getMessage());
+            JsonNode response = objectMapper.createObjectNode()
+                    .put("isSuccess", "false")
+                    .put("message", "Internal Server Error")
+                    .put("error",e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
     }

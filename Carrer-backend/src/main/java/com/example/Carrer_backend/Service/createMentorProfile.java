@@ -7,6 +7,8 @@ import com.example.Carrer_backend.Entity.mentor;
 import com.example.Carrer_backend.Entity.user;
 import com.example.Carrer_backend.Repository.mentorRepository;
 import com.example.Carrer_backend.Repository.userRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 
@@ -15,35 +17,37 @@ public class createMentorProfile {
 
     private final mentorRepository mentorRepository;
     private final userRepository userRepository;
+    private final ObjectMapper objectMapper;
 
-    public createMentorProfile(mentorRepository mentorRepository, userRepository userRepository) {
+    public createMentorProfile(mentorRepository mentorRepository, userRepository userRepository, ObjectMapper objectMapper) {
         this.mentorRepository = mentorRepository;
         this.userRepository = userRepository;
+        this.objectMapper = objectMapper;
     }
 
-    public ResponseEntity<?> update_mentor_profile(String fullName, String profilePicture, String yearOfMentoring,
+    public ResponseEntity<JsonNode> update_mentor_profile(String fullName, String profilePicture, String yearOfMentoring,
             String bio, List<String> expertise, String userId) {
 
         try {
 
             if (fullName == null || yearOfMentoring == null || expertise == null) {
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "Please provide all the required fields");
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "false")
+                        .put("message", "Please provide all the required fields");
                 return ResponseEntity.badRequest().body(response);
             }
 
             if (userId == null) {
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "User ID not found");
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "false")
+                        .put("message", "User ID not found");
                 return ResponseEntity.badRequest().body(response);
             }
 
             if (expertise.isEmpty()) {
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "Please provide at least one expertise");
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "false")
+                        .put("message", "Please provide at least one expertise");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -66,10 +70,10 @@ public class createMentorProfile {
                 mentor savedUser = mentorRepository.save(existingUser);
                 userRepository.save(alreadyExistingUser);
 
-                Map<String, Object> response = new HashMap<>();
-                response.put("isSuccess", "true");
-                response.put("message", "Profile completion status updated successfully");
-                response.put("data", savedUser);
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "true")
+                        .put("message", "Profile completion status updated successfully")
+                        .set("data", objectMapper.valueToTree(savedUser));
                 return ResponseEntity.ok().body(response);
             } else {
                 mentor newUser = new mentor();
@@ -91,10 +95,10 @@ public class createMentorProfile {
                 mentor savedUser = mentorRepository.save(newUser);
                 userRepository.save(alreadyExistingUser);
 
-                Map<String, Object> response = new HashMap<>();
-                response.put("isSuccess", "true");
-                response.put("message", "Profile completion status updated successfully");
-                response.put("data", savedUser);
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "true")
+                        .put("message", "Profile completion status updated successfully")
+                        .set("data", objectMapper.valueToTree(savedUser));
                 return ResponseEntity.ok().body(response);
             }
 
@@ -102,9 +106,10 @@ public class createMentorProfile {
 
             System.out.println("service error");
 
-            Map<String, String> response = new HashMap<>();
-            response.put("isSuccess", "false");
-            response.put("message", "Error updating profile completion status " + e.getMessage());
+            JsonNode response = objectMapper.createObjectNode()
+                    .put("isSuccess", "false")
+                    .put("message", "Error updating profile completion status ")
+                    .put("error",e.getMessage());
             return ResponseEntity.internalServerError().body(response);
 
         }

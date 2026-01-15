@@ -7,6 +7,8 @@ import com.example.Carrer_backend.Entity.recruiter;
 import com.example.Carrer_backend.Entity.user;
 import com.example.Carrer_backend.Repository.recruiterRepository;
 import com.example.Carrer_backend.Repository.userRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 
@@ -15,13 +17,15 @@ public class createRecruiterProfile {
 
     private final userRepository userRepository;
     private final recruiterRepository recruiterRepository;
+    private final ObjectMapper objectMapper;
 
-    public createRecruiterProfile(userRepository userRepository, recruiterRepository recruiterRepository) {
+    public createRecruiterProfile(userRepository userRepository, recruiterRepository recruiterRepository, ObjectMapper objectMapper) {
         this.userRepository = userRepository;
         this.recruiterRepository = recruiterRepository;
+        this.objectMapper = objectMapper;
     }
 
-    public ResponseEntity<?> create_recruiter_profile(String userId, String fullName, String companyName,
+    public ResponseEntity<JsonNode> create_recruiter_profile(String userId, String fullName, String companyName,
             String profilePicture, String jobTitle, String companySize, String industry) {
 
         try {
@@ -29,16 +33,16 @@ public class createRecruiterProfile {
             if (fullName == null || companyName == null || jobTitle == null || companySize == null
                     || industry == null) {
 
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "All fields are required");
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "false")
+                        .put("message", "All fields are required");
                 return ResponseEntity.badRequest().body(response);
             }
 
             if (userId == null) {
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "User ID not found");
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "false")
+                        .put("message", "User ID not found");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -63,10 +67,10 @@ public class createRecruiterProfile {
                 recruiter savedUser = recruiterRepository.save(existingUser);
                 userRepository.save(alreadyExistingUser);
 
-                Map<String, Object> response = new HashMap<>();
-                response.put("isSuccess", "true");
-                response.put("message", "Profile completion status updated successfully");
-                response.put("data", savedUser);
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "true")
+                        .put("message", "Profile completion status updated successfully")
+                        .set("data", objectMapper.valueToTree(savedUser));
                 return ResponseEntity.ok().body(response);
             }
 
@@ -90,17 +94,18 @@ public class createRecruiterProfile {
                 recruiter savedUser = recruiterRepository.save(newUser);
                 userRepository.save(alreadyExistingUser);
 
-                Map<String, Object> response = new HashMap<>();
-                response.put("isSuccess", "true");
-                response.put("message", "Profile completion status updated successfully");
-                response.put("data", savedUser);
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "true")
+                        .put("message", "Profile completion status updated successfully")
+                        .set("data", objectMapper.valueToTree(savedUser));
                 return ResponseEntity.ok().body(response);
             }
 
         } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("isSuccess", "false");
-            response.put("message", "Error updating profile completion status " + e.getMessage());
+            JsonNode response = objectMapper.createObjectNode()
+                    .put("isSuccess", "false")
+                    .put("message", "Error updating profile completion status ")
+                    .put("error",e.getMessage());
             return ResponseEntity.internalServerError().body(response);
 
         }
