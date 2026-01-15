@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Carrer_backend.DTO.updateMentorProfileRequest;
 import com.example.Carrer_backend.Service.createMentorProfile;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -24,7 +25,7 @@ public class setMentorProfile {
     }
 
     @PostMapping
-    public ResponseEntity<?> updateMentorProfile(@RequestBody updateMentorProfileRequest updateMentorProfileRequest, HttpServletRequest request){
+    public ResponseEntity<JsonNode> updateMentorProfile(@RequestBody updateMentorProfileRequest updateMentorProfileRequest, HttpServletRequest request){
 
         String userId = (String) request.getAttribute("userId");
 

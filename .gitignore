@@ -1,2 +1,44 @@
-career_query.txt
-./Carrer-backend/src/main/resources/application.properties
+query.txt
+
+Carrer-backend/src/main/resources/application.properties
+
+
+HELP.md
+Carrer-backend/gradle
+Carrer-backend/build/
+!Carrer-backend/gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+Carrer-backend/.apt_generated
+Carrer-backend/.classpath
+Carrer-backend/.factorypath
+Carrer-backend/.project
+Carrer-backend/.settings
+Carrer-backend/.springBeans
+Carrer-backend/.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+Carrer-backend/.idea
+*.iws
+*.iml
+*.ipr
+Carrer-backend/out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+Carrer-backend/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+

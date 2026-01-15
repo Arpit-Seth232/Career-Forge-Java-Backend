@@ -7,6 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.persistence.Column;
@@ -23,6 +25,7 @@ import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "resumes")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class resume {
 
     @EmbeddedId
@@ -40,11 +43,13 @@ public class resume {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     @ColumnDefault("CURRENT_TIMESTAMP")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at", updatable = true, nullable = false)
     @ColumnDefault("CURRENT_TIMESTAMP")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
     public resumeEmbeddedId getId() {

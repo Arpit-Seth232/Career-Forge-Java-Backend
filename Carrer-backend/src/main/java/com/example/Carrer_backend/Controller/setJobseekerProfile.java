@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Carrer_backend.DTO.updateJobseekerProfileRequest;
 import com.example.Carrer_backend.Service.createJobseekerProfile;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -24,9 +25,8 @@ public class setJobseekerProfile {
     }
 
     @PostMapping
-    public ResponseEntity<?> updateJobseekerProfile(@RequestBody updateJobseekerProfileRequest updateJobseekerProfileRequest, HttpServletRequest request){
+    public ResponseEntity<JsonNode> updateJobseekerProfile(@RequestBody updateJobseekerProfileRequest updateJobseekerProfileRequest, HttpServletRequest request){
 
-        try{
             String fullName = updateJobseekerProfileRequest.getFullName();
             String profilePicture = updateJobseekerProfileRequest.getProfilePicture();
             String yearOfExperience = updateJobseekerProfileRequest.getYearOfExperience();
@@ -39,16 +39,7 @@ public class setJobseekerProfile {
 
             return createJobseekerProfile.update_jobseeker_profile(fullName, profilePicture, yearOfExperience, bio, preferredRoles, userId);
 
-        }
-        catch(Exception e){
-
-            System.out.println("controller error");
-
-            Map<String, String> response = new HashMap<>();
-            response.put("isSuccess", "false");
-            response.put("message", "Error updating profile completion status " + e.getMessage());
-            return ResponseEntity.internalServerError().body(response);
-            
-        }
+        
+        
     }
 }

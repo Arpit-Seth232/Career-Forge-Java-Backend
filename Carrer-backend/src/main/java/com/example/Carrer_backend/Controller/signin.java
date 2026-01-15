@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Carrer_backend.DTO.signInRequest;
 import com.example.Carrer_backend.Service.signInUser;
+import com.fasterxml.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping("/api/signin")
@@ -20,7 +21,7 @@ public class signin {
     }
     
     @PostMapping
-    public ResponseEntity<?> signin_user(@RequestBody signInRequest logInRequest){
+    public ResponseEntity<JsonNode> signin_user(@RequestBody signInRequest logInRequest){
 
         String email = logInRequest.getEmail();
         String password = logInRequest.getPassword();

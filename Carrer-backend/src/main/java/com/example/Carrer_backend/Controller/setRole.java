@@ -1,7 +1,6 @@
 package com.example.Carrer_backend.Controller;
 
 
-import java.util.*;
 
 import org.springframework.http.ResponseEntity;
 
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Carrer_backend.DTO.updateRoleRequest;
 import com.example.Carrer_backend.Service.updateRole;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -20,9 +21,11 @@ import jakarta.servlet.http.HttpServletRequest;
 public class setRole {
 
     private updateRole updateRole;
+    private final ObjectMapper objectMapper;
 
-    public setRole(updateRole updateRole) {
+    public setRole(updateRole updateRole, ObjectMapper objectMapper) {
         this.updateRole = updateRole;
+        this.objectMapper = objectMapper;
     }
 
     // @GetMapping
@@ -44,13 +47,13 @@ public class setRole {
     // }
 
     @PostMapping
-    public ResponseEntity<?> setRole_user(HttpServletRequest request, @RequestBody updateRoleRequest updateRoleRequest){
+    public ResponseEntity<JsonNode> setRole_user(HttpServletRequest request, @RequestBody updateRoleRequest updateRoleRequest){
         
             String role = updateRoleRequest.getRole();
             if(role == null){
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "Please select a role");
+                JsonNode response = objectMapper.createObjectNode()
+                .put("isSuccess", "false")
+                .put("message", "Please select a role");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -59,9 +62,9 @@ public class setRole {
             // String email = (String) request.getAttribute("email");
 
             if(userId == null){
-                Map<String, String> response = new HashMap<>();
-                response.put("isSuccess", "false");
-                response.put("message", "User ID not found");
+                JsonNode response = objectMapper.createObjectNode()
+                .put("isSuccess", "false")
+                .put("message", "User ID not found");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -71,10 +74,9 @@ public class setRole {
             return  updateRole.updateRole_user(userId, role);
         }
         catch(Exception e){
-            Map<String, String> response = new HashMap<>();
-            response.put("isSuccess", "false");
-            response.put("message", "Internal Server Error");
-            response.put("error",e.getMessage());
+            JsonNode response = objectMapper.createObjectNode()
+            .put("isSuccess", "false")
+            .put("message", "Internal Server Error");
             return ResponseEntity.internalServerError().body(response);
         }
     }
