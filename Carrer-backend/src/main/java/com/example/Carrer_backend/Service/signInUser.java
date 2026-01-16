@@ -80,10 +80,15 @@ public class signInUser {
             HttpHeaders header = new HttpHeaders();
             header.add(HttpHeaders.SET_COOKIE, cookie.toString());
 
+            JsonNode loginInfo = objectMapper.createObjectNode()
+                    .put("name", user_details.getName())
+                    .put("role", user_details.getRole())
+                    .put("isProfileCompleted", user_details.getIsProfileCompleted());
+
             JsonNode response = objectMapper.createObjectNode()
                     .put("isSuccess", "true")
                     .put("message", "User logged in successfully")
-                    .set("data", objectMapper.valueToTree(user_details));
+                    .set("data", loginInfo);
             
             return ResponseEntity.ok().headers(header).body(response);
             

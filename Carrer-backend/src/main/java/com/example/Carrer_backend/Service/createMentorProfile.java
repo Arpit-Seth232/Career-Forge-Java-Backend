@@ -70,10 +70,20 @@ public class createMentorProfile {
                 mentor savedUser = mentorRepository.save(existingUser);
                 userRepository.save(alreadyExistingUser);
 
+                JsonNode createdUserInfo = objectMapper.createObjectNode()
+                        .put("name", savedUser.getFullName())
+                        .put("role", alreadyExistingUser.getRole())
+                        .put("email", alreadyExistingUser.getEmail())
+                        .put("isProfileCompleted", alreadyExistingUser.getIsProfileCompleted())
+                        .put("profilePicture", savedUser.getProfilePicture())
+                        .put("yearOfMentoring", savedUser.getYearOfMentoring())
+                        .put("bio", savedUser.getBio())
+                        .set("expertise", objectMapper.valueToTree(savedUser.getExpertise()));
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "true")
                         .put("message", "Profile completion status updated successfully")
-                        .set("data", objectMapper.valueToTree(savedUser));
+                        .set("data", createdUserInfo);
                 return ResponseEntity.ok().body(response);
             } else {
                 mentor newUser = new mentor();
@@ -95,10 +105,21 @@ public class createMentorProfile {
                 mentor savedUser = mentorRepository.save(newUser);
                 userRepository.save(alreadyExistingUser);
 
+
+                JsonNode createdUserInfo = objectMapper.createObjectNode()
+                        .put("name", savedUser.getFullName())
+                        .put("role", alreadyExistingUser.getRole())
+                        .put("email", alreadyExistingUser.getEmail())
+                        .put("isProfileCompleted", alreadyExistingUser.getIsProfileCompleted())
+                        .put("profilePicture", savedUser.getProfilePicture())
+                        .put("yearOfMentoring", savedUser.getYearOfMentoring())
+                        .put("bio", savedUser.getBio())
+                        .set("expertise", objectMapper.valueToTree(savedUser.getExpertise()));
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "true")
                         .put("message", "Profile completion status updated successfully")
-                        .set("data", objectMapper.valueToTree(savedUser));
+                        .set("data", createdUserInfo);
                 return ResponseEntity.ok().body(response);
             }
 
