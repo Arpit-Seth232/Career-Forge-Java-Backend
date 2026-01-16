@@ -93,10 +93,16 @@ public class createUser {
         
         user saved_user = userRepository.save(new_user);
 
+        JsonNode createdUserInfo = objectMapper.createObjectNode()
+                .put("name", saved_user.getName())
+                .put("role", saved_user.getRole())
+                .put("email", saved_user.getEmail())
+                .put("isProfileCompleted", saved_user.getIsProfileCompleted());
+
         JsonNode response = objectMapper.createObjectNode()
                 .put("isSuccess", "true")
                 .put("message", "User created successfully")
-                .set("data", objectMapper.valueToTree(saved_user));
+                .set("data", createdUserInfo);
 
         return ResponseEntity.created(null).headers(header).body(response);
     }

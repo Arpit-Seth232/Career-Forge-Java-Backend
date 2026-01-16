@@ -2,6 +2,7 @@ package com.example.Carrer_backend.Service;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -99,11 +100,28 @@ public class mentorMatchService {
 
             }
 
+            List<ObjectNode> mentorsMatchNode = new ArrayList<>();
+            
+
+            mentors.forEach(mentor -> {
+
+                ObjectNode mentorNode = objectMapper.createObjectNode();
+                mentorNode.put("name", mentor.getFullName());
+                mentorNode.put("profilePicture", mentor.getProfilePicture());
+                mentorNode.put("yearOfMentoring", mentor.getYearOfMentoring());
+                mentorNode.put("bio", mentor.getBio());
+                mentorNode.set("expertise", objectMapper.valueToTree(mentor.getExpertise())); 
+
+                mentorsMatchNode.add(mentorNode);
+
+                
+            });
+
 
             ObjectNode response = objectMapper.createObjectNode();
             response.put("isSuccess", true);
             response.put("message", "mentor matches found");
-            response.set("mentors", objectMapper.valueToTree(mentors));
+            response.set("mentors", objectMapper.valueToTree(mentorsMatchNode));
             return ResponseEntity.ok().body(response);
 
         }

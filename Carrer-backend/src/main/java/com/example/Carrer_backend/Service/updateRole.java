@@ -28,12 +28,19 @@ public class updateRole {
             user user_details = userRepository.findById(userId).get();
 
             user_details.setRole(role);
-            userRepository.save(user_details);
+            user updated_user = userRepository.save(user_details);
+
+            JsonNode updated_user_info = objectMapper.createObjectNode()
+                    .put("name", updated_user.getName())
+                    .put("role", updated_user.getRole())
+                    .put("email", updated_user.getEmail())
+                    .put("isProfileCompleted", updated_user.getIsProfileCompleted());
+
 
             JsonNode response = objectMapper.createObjectNode()
                     .put("isSuccess", "true")
                     .put("message", "User role updated successfully")
-                    .set("data", objectMapper.valueToTree(user_details));
+                    .set("data", updated_user_info);
             
             return ResponseEntity.ok().body(response);
         }

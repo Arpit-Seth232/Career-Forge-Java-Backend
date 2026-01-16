@@ -59,10 +59,20 @@ public class fetchProfile {
 
                     Optional<jobseeker> jobseeker = jobseekerRepository.findById(userId);
 
+                    JsonNode userInfo = objectMapper.createObjectNode()
+                            .put("name", jobseeker.get().getFullName())
+                            .put("role", user.getRole())
+                            .put("email", user.getEmail())
+                            .put("isProfileCompleted", user.getIsProfileCompleted())
+                            .put("profilePicture", jobseeker.get().getProfilePicture())
+                            .put("yearOfExperience", jobseeker.get().getYearOfExperience())
+                            .put("bio", jobseeker.get().getBio())
+                            .set("preferredRole", objectMapper.valueToTree(jobseeker.get().getPreferredRoles()));
+
                     JsonNode response = objectMapper.createObjectNode()
                             .put("isSuccess", "true")
                             .put("message", "Profile fetched successfully")
-                            .set("data", objectMapper.valueToTree(jobseeker.get()));
+                            .set("data", userInfo);
                     return ResponseEntity.ok().body(response);
 
                 }
@@ -71,10 +81,21 @@ public class fetchProfile {
 
                     Optional<recruiter> recruiter = recruiterRepository.findById(userId);
 
+                    JsonNode userInfo = objectMapper.createObjectNode()
+                            .put("name", recruiter.get().getFullName())
+                            .put("role", user.getRole())
+                            .put("email", user.getEmail())
+                            .put("isProfileCompleted", user.getIsProfileCompleted())
+                            .put("profilePicture", recruiter.get().getProfilePicture())
+                            .put("jobTitle", recruiter.get().getJobTitle())
+                            .put("companySize", recruiter.get().getCompanySize())
+                            .put("industry", recruiter.get().getIndustry())
+                            .put("companyName", recruiter.get().getCompanyName());
+
                     JsonNode response = objectMapper.createObjectNode()
                             .put("isSuccess", "true")
                             .put("message", "Profile fetched successfully")
-                            .set("data", objectMapper.valueToTree(recruiter.get()));
+                            .set("data", userInfo);
                     return ResponseEntity.ok().body(response);
                     
                 }
@@ -83,10 +104,21 @@ public class fetchProfile {
 
                     Optional<mentor> mentor = mentorRepository.findById(userId);
 
+                    JsonNode userInfo = objectMapper.createObjectNode()
+                            .put("name", mentor.get().getFullName())
+                            .put("role", user.getRole())
+                            .put("email", user.getEmail())
+                            .put("isProfileCompleted", user.getIsProfileCompleted())
+                            .put("profilePicture", mentor.get().getProfilePicture())
+                            .put("yearOfMentoring", mentor.get().getYearOfMentoring())
+                            .put("bio", mentor.get().getBio())
+                            .set("expertise", objectMapper.valueToTree(mentor.get().getExpertise()));
+                            
+
                     JsonNode response = objectMapper.createObjectNode()
                             .put("isSuccess", "true")
                             .put("message", "Profile fetched successfully")
-                            .set("data", objectMapper.valueToTree(mentor.get()));
+                            .set("data", userInfo);
                     return ResponseEntity.ok().body(response);
                     
                 }

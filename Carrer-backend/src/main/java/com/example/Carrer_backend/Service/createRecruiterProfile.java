@@ -67,10 +67,21 @@ public class createRecruiterProfile {
                 recruiter savedUser = recruiterRepository.save(existingUser);
                 userRepository.save(alreadyExistingUser);
 
+                JsonNode createdUserInfo = objectMapper.createObjectNode()
+                        .put("name", savedUser.getFullName())
+                        .put("role", alreadyExistingUser.getRole())
+                        .put("email", alreadyExistingUser.getEmail())
+                        .put("isProfileCompleted", alreadyExistingUser.getIsProfileCompleted())
+                        .put("profilePicture", savedUser.getProfilePicture())
+                        .put("jobTitle", savedUser.getJobTitle())
+                        .put("companySize", savedUser.getCompanySize())
+                        .put("industry", savedUser.getIndustry())
+                        .put("companyName", savedUser.getCompanyName());
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "true")
                         .put("message", "Profile completion status updated successfully")
-                        .set("data", objectMapper.valueToTree(savedUser));
+                        .set("data", createdUserInfo);
                 return ResponseEntity.ok().body(response);
             }
 
@@ -94,10 +105,21 @@ public class createRecruiterProfile {
                 recruiter savedUser = recruiterRepository.save(newUser);
                 userRepository.save(alreadyExistingUser);
 
+                JsonNode createdUserInfo = objectMapper.createObjectNode()
+                        .put("name", savedUser.getFullName())
+                        .put("role", alreadyExistingUser.getRole())
+                        .put("email", alreadyExistingUser.getEmail())
+                        .put("isProfileCompleted", alreadyExistingUser.getIsProfileCompleted())
+                        .put("profilePicture", savedUser.getProfilePicture())
+                        .put("jobTitle", savedUser.getJobTitle())
+                        .put("companySize", savedUser.getCompanySize())
+                        .put("industry", savedUser.getIndustry())
+                        .put("companyName", savedUser.getCompanyName());
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "true")
                         .put("message", "Profile completion status updated successfully")
-                        .set("data", objectMapper.valueToTree(savedUser));
+                        .set("data", createdUserInfo);
                 return ResponseEntity.ok().body(response);
             }
 
