@@ -15,10 +15,12 @@ public class updateRole {
 
     private userRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final apiLogService apiLogService;
 
-    public updateRole(userRepository userRepository, ObjectMapper objectMapper) {
+    public updateRole(userRepository userRepository, ObjectMapper objectMapper, apiLogService apiLogService) {
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
+        this.apiLogService = apiLogService;
     }
 
     
@@ -41,6 +43,8 @@ public class updateRole {
                     .put("isSuccess", "true")
                     .put("message", "User role updated successfully")
                     .set("data", updated_user_info);
+
+            apiLogService.logApiHit(userId, "api/auth/role", "User role updated successfully");
             
             return ResponseEntity.ok().body(response);
         }
@@ -49,6 +53,9 @@ public class updateRole {
                     .put("isSuccess", "false")
                     .put("message", "Internal Server Error")
                     .put("error",e.getMessage());
+
+            apiLogService.logApiHit(userId, "api/auth/role", "Internal Server Error due to " + e.getMessage());
+            
             return ResponseEntity.internalServerError().body(response);
         }
     }

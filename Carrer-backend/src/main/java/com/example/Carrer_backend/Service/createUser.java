@@ -31,16 +31,21 @@ public class createUser {
     private String secret;
 
     private final ObjectMapper objectMapper;
+    private final apiLogService apiLogService;
 
-    public createUser(userRepository userRepository, ObjectMapper objectMapper) {
+    public createUser(userRepository userRepository, ObjectMapper objectMapper, apiLogService apiLogService) {
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
+        this.apiLogService = apiLogService;
     }
 
     public ResponseEntity<JsonNode> user_creation(String name, String email, String password, String confirmPassword) {
         
         try{
         if (name == null || email == null || password == null || confirmPassword == null) {
+
+            apiLogService.logApiHit("unknown user", "api/signup", "All fields are required");
+
             JsonNode response = objectMapper.createObjectNode()
                     .put("isSuccess", "false")
                     .put("message", "Please provide all the fields");
@@ -48,6 +53,9 @@ public class createUser {
         }
 
         if (!password.equals(confirmPassword)) {
+
+            apiLogService.logApiHit("unknown user", "api/signup", "Password and confirm password do not match");
+
             JsonNode response = objectMapper.createObjectNode()
                     .put("isSuccess", "false")
                     .put("message", "Password and confirm password do not match");
@@ -55,6 +63,9 @@ public class createUser {
         }
 
         if (userRepository.existsByEmail(email)) {
+
+            apiLogService.logApiHit("unknown user", "api/signup", "Email already exists");
+
             JsonNode response = objectMapper.createObjectNode()
                     .put("isSuccess", "false")
                     .put("message", "Email already exists");
@@ -99,6 +110,7 @@ public class createUser {
                 .put("email", saved_user.getEmail())
                 .put("isProfileCompleted", saved_user.getIsProfileCompleted());
 
+                apiLogService.logApiHit(userId, "api/signup", "User created successfully");
         JsonNode response = objectMapper.createObjectNode()
                 .put("isSuccess", "true")
                 .put("message", "User created successfully")
@@ -107,6 +119,8 @@ public class createUser {
         return ResponseEntity.created(null).headers(header).body(response);
     }
     catch(Exception e){
+
+        apiLogService.logApiHit("unknown user", "api/signup","Internal Server Error due to " + e.getMessage());
         JsonNode response = objectMapper.createObjectNode()
                 .put("isSuccess", "false")
                 .put("message", "Internal Server Error")

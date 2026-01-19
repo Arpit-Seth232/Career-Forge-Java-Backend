@@ -7,6 +7,8 @@ import com.example.Carrer_backend.Entity.recruiter;
 import com.example.Carrer_backend.Entity.user;
 import com.example.Carrer_backend.Repository.recruiterRepository;
 import com.example.Carrer_backend.Repository.userRepository;
+
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,11 +20,13 @@ public class createRecruiterProfile {
     private final userRepository userRepository;
     private final recruiterRepository recruiterRepository;
     private final ObjectMapper objectMapper;
+    private final apiLogService apiLogService;
 
-    public createRecruiterProfile(userRepository userRepository, recruiterRepository recruiterRepository, ObjectMapper objectMapper) {
+    public createRecruiterProfile(userRepository userRepository, recruiterRepository recruiterRepository, ObjectMapper objectMapper, apiLogService apiLogService) {
         this.userRepository = userRepository;
         this.recruiterRepository = recruiterRepository;
         this.objectMapper = objectMapper;
+        this.apiLogService = apiLogService;
     }
 
     public ResponseEntity<JsonNode> create_recruiter_profile(String userId, String fullName, String companyName,
@@ -33,6 +37,8 @@ public class createRecruiterProfile {
             if (fullName == null || companyName == null || jobTitle == null || companySize == null
                     || industry == null) {
 
+                apiLogService.logApiHit(userId, "api/auth/recruiter/profile", "All fields are required");
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "All fields are required");
@@ -40,6 +46,9 @@ public class createRecruiterProfile {
             }
 
             if (userId == null) {
+
+                apiLogService.logApiHit(userId, "api/auth/recruiter/profile", "User ID not found");
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "User ID not found");
@@ -77,6 +86,8 @@ public class createRecruiterProfile {
                         .put("companySize", savedUser.getCompanySize())
                         .put("industry", savedUser.getIndustry())
                         .put("companyName", savedUser.getCompanyName());
+
+                apiLogService.logApiHit(userId, "api/auth/recruiter/profile", "Profile completion status updated successfully");
 
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "true")
@@ -116,17 +127,22 @@ public class createRecruiterProfile {
                         .put("industry", savedUser.getIndustry())
                         .put("companyName", savedUser.getCompanyName());
 
+                apiLogService.logApiHit(userId, "api/auth/recruiter/profile", "New recruiter profile created successfully");
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "true")
-                        .put("message", "Profile completion status updated successfully")
+                        .put("message", "New recruiter profile created successfully")
                         .set("data", createdUserInfo);
                 return ResponseEntity.ok().body(response);
             }
 
         } catch (Exception e) {
+
+            apiLogService.logApiHit(userId, "api/auth/recruiter/profile", "Error updating/creating profile completion status due to " + e.getMessage());
+
             JsonNode response = objectMapper.createObjectNode()
                     .put("isSuccess", "false")
-                    .put("message", "Error updating profile completion status ")
+                    .put("message", "Error updating/creating profile completion status ")
                     .put("error",e.getMessage());
             return ResponseEntity.internalServerError().body(response);
 

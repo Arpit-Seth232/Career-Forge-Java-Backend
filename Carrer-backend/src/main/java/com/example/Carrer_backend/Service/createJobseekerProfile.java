@@ -1,5 +1,6 @@
 package com.example.Carrer_backend.Service;
 
+
 import java.util.*;
 
 
@@ -20,33 +21,45 @@ public class createJobseekerProfile {
     private final jobseekerRepository jobseekerRepository;
     private final userRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final apiLogService apiLogService;
 
-    public createJobseekerProfile(jobseekerRepository jobseekerRepository, userRepository userRepository, ObjectMapper objectMapper) {
+    public createJobseekerProfile(jobseekerRepository jobseekerRepository, userRepository userRepository, ObjectMapper objectMapper, apiLogService apiLogService) {
         this.jobseekerRepository = jobseekerRepository;
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
+        this.apiLogService = apiLogService;
     }
 
     public ResponseEntity<JsonNode> update_jobseeker_profile(String fullName, String profilePicture, String yearOfExperience,
             String bio, List<String> preferredRoles, String userId) {
 
         try {
-
+            if (userId == null) {
+                
+                
+                apiLogService.logApiHit(userId, "api/auth/jobseeker/profile", "User ID not found");
+                
+                JsonNode response = objectMapper.createObjectNode()
+                        .put("isSuccess", "false")
+                        .put("message", "User ID not found");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
             if (fullName == null || yearOfExperience == null || preferredRoles == null) {
+
+                apiLogService.logApiHit(userId, "api/auth/jobseeker/profile", "Please provide all the required fields");
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "Please provide all the required fields");
                 return ResponseEntity.badRequest().body(response);
             }
 
-            if (userId == null) {
-                JsonNode response = objectMapper.createObjectNode()
-                        .put("isSuccess", "false")
-                        .put("message", "User ID not found");
-                return ResponseEntity.badRequest().body(response);
-            }
 
             if (preferredRoles.isEmpty()) {
+
+                apiLogService.logApiHit(userId, "api/auth/jobseeker/profile", "Please provide at least one preferred role");
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "Please provide at least one preferred role");
@@ -87,9 +100,11 @@ public class createJobseekerProfile {
                         .put("bio", savedUser.getBio())
                         .set("preferredRoles", objectMapper.valueToTree(savedUser.getPreferredRoles()));
 
+                apiLogService.logApiHit(userId, "api/auth/jobseeker/profile", "Existed profile updated successfully");
+                
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "true")
-                        .put("message", "Profile completion status updated successfully")
+                        .put("message", "Existed profile updated successfully")
                         .set("data", createdUserInfo);
                 return ResponseEntity.ok().body(response);
             } else {
@@ -123,10 +138,12 @@ public class createJobseekerProfile {
                         .put("bio", savedUser.getBio())
                         .set("preferredRoles", objectMapper.valueToTree(savedUser.getPreferredRoles()));
 
-
+                apiLogService.logApiHit(userId, "api/auth/jobseeker/profile", "New jobseeker profile created successfully");
+                
+                
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "true")
-                        .put("message", "Profile completion status updated successfully")
+                        .put("message", "New jobseeker profile created successfully")
                         .set("data", createdUserInfo);
                 return ResponseEntity.ok().body(response);
 
@@ -134,13 +151,16 @@ public class createJobseekerProfile {
 
         } catch (Exception e) {
 
-            System.out.println("service error");
+            // System.out.println("service error");
+
+            apiLogService.logApiHit(userId, "api/auth/jobseeker/profile", "Error updating profile completion status due to " + e.getMessage());
 
             JsonNode response = objectMapper.createObjectNode()
                     .put("isSuccess", "false")
                     .put("message", "Error updating profile completion status ")
                     .put("error", e.getMessage());
             return ResponseEntity.internalServerError().body(response);
+
 
         }
 
