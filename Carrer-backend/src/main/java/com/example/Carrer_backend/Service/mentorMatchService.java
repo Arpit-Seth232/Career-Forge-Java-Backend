@@ -25,19 +25,23 @@ public class mentorMatchService {
     private final ObjectMapper objectMapper;
     private final userRepository userRepository;
     private final resumeRepository resumeRepository;
-    private final mentorRepository mentorRepository;    
+    private final mentorRepository mentorRepository; 
+    private final apiLogService apiLogService;    
 
-    public mentorMatchService(ObjectMapper objectMapper, userRepository userRepository, resumeRepository resumeRepository, mentorRepository mentorRepository) {
+    public mentorMatchService(ObjectMapper objectMapper, userRepository userRepository, resumeRepository resumeRepository, mentorRepository mentorRepository, apiLogService apiLogService) {
         this.objectMapper = objectMapper;
         this.userRepository = userRepository;
         this.resumeRepository = resumeRepository;
         this.mentorRepository = mentorRepository;
+        this.apiLogService = apiLogService;
     }
 
     public ResponseEntity<JsonNode> fetchMentors(String userId){
 
         try{
         if(userId == null){
+
+            apiLogService.logApiHit(userId, "api/auth/mentorMatch", "User ID not found");
 
             ObjectNode response = objectMapper.createObjectNode();
             response.put("isSuccess", false);
@@ -50,6 +54,8 @@ public class mentorMatchService {
         Optional<user> user = userRepository.findById(userId);
 
         if(user.isEmpty()){
+
+            apiLogService.logApiHit(userId, "api/auth/mentorMatch", "Invalid user id, no user found");
 
             ObjectNode response = objectMapper.createObjectNode();
             response.put("isSuccess", false);
@@ -70,6 +76,8 @@ public class mentorMatchService {
                 ObjectNode response = objectMapper.createObjectNode();
                 response.put("isSuccess", false);
                 response.put("message", "resume not found, please add a resume, no mentor matches found");
+
+                apiLogService.logApiHit(userId, "api/auth/mentorMatch", "Resume not found, please add a resume, no mentor matches found");
 
                 return ResponseEntity.badRequest().body(response);
 
@@ -95,6 +103,8 @@ public class mentorMatchService {
                 ObjectNode response = objectMapper.createObjectNode();
                 response.put("isSuccess", false);
                 response.put("message", "no mentor matches found");
+
+                apiLogService.logApiHit(userId, "api/auth/mentorMatch", "No mentor matches found");
 
                 return ResponseEntity.badRequest().body(response);
 
@@ -122,6 +132,9 @@ public class mentorMatchService {
             response.put("isSuccess", true);
             response.put("message", "mentor matches found");
             response.set("mentors", objectMapper.valueToTree(mentorsMatchNode));
+
+            apiLogService.logApiHit(userId, "api/auth/mentorMatch", "Mentor matches found");
+            
             return ResponseEntity.ok().body(response);
 
         }
@@ -130,6 +143,8 @@ public class mentorMatchService {
             ObjectNode response = objectMapper.createObjectNode();
             response.put("isSuccess", false);
             response.put("message", "user is not a jobseeker");
+
+            apiLogService.logApiHit(userId, "api/auth/mentorMatch", "User is not a jobseeker");
 
             return ResponseEntity.badRequest().body(response);
 
@@ -141,6 +156,8 @@ public class mentorMatchService {
         response.put("isSuccess", false);
         response.put("message", "internal server error");
         response.put("error", e.getMessage());
+
+        apiLogService.logApiHit(userId, "api/auth/mentorMatch", "Internal server error due to " + e.getMessage());
 
         return ResponseEntity.badRequest().body(response);
 

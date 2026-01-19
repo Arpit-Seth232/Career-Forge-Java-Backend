@@ -22,14 +22,16 @@ public class fetchProfile {
     private final jobseekerRepository jobseekerRepository;
     private final recruiterRepository recruiterRepository;
     private final mentorRepository mentorRepository;
-    private final ObjectMapper objectMapper;    
+    private final ObjectMapper objectMapper;   
+    private final apiLogService apiLogService; 
 
-    public fetchProfile(userRepository userRepository, jobseekerRepository jobseekerRepository, recruiterRepository recruiterRepository, mentorRepository mentorRepository, ObjectMapper objectMapper) {
+    public fetchProfile(userRepository userRepository, jobseekerRepository jobseekerRepository, recruiterRepository recruiterRepository, mentorRepository mentorRepository, ObjectMapper objectMapper, apiLogService apiLogService) {
         this.userRepository = userRepository;
         this.jobseekerRepository = jobseekerRepository;
         this.recruiterRepository = recruiterRepository;
         this.mentorRepository = mentorRepository;
         this.objectMapper = objectMapper;
+        this.apiLogService = apiLogService;
     }
 
     @GetMapping
@@ -38,6 +40,8 @@ public class fetchProfile {
         try{
 
             if(userId == null){
+
+                apiLogService.logApiHit(userId, "api/auth/profile", "User ID not found");
 
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
@@ -69,6 +73,8 @@ public class fetchProfile {
                             .put("bio", jobseeker.get().getBio())
                             .set("preferredRole", objectMapper.valueToTree(jobseeker.get().getPreferredRoles()));
 
+                    apiLogService.logApiHit(userId, "api/auth/profile", "Profile fetched successfully");
+
                     JsonNode response = objectMapper.createObjectNode()
                             .put("isSuccess", "true")
                             .put("message", "Profile fetched successfully")
@@ -92,6 +98,7 @@ public class fetchProfile {
                             .put("industry", recruiter.get().getIndustry())
                             .put("companyName", recruiter.get().getCompanyName());
 
+                    apiLogService.logApiHit(userId, "api/auth/profile", "Profile fetched successfully");
                     JsonNode response = objectMapper.createObjectNode()
                             .put("isSuccess", "true")
                             .put("message", "Profile fetched successfully")
@@ -113,7 +120,8 @@ public class fetchProfile {
                             .put("yearOfMentoring", mentor.get().getYearOfMentoring())
                             .put("bio", mentor.get().getBio())
                             .set("expertise", objectMapper.valueToTree(mentor.get().getExpertise()));
-                            
+
+                    apiLogService.logApiHit(userId, "api/auth/profile", "Profile fetched successfully");
 
                     JsonNode response = objectMapper.createObjectNode()
                             .put("isSuccess", "true")
@@ -125,6 +133,8 @@ public class fetchProfile {
 
             }
             else{
+
+                apiLogService.logApiHit(userId, "api/auth/profile", "User mapped to invalid role");
 
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
@@ -140,6 +150,9 @@ public class fetchProfile {
                     .put("isSuccess", "false")
                     .put("message", "Error fetching profile ")
                     .put("error", e.getMessage());
+            
+            apiLogService.logApiHit(userId, "api/auth/profile", "Error fetching profile due to " + e.getMessage());
+            
             return ResponseEntity.internalServerError().body(response);
             
         }

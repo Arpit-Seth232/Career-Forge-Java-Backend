@@ -28,10 +28,12 @@ public class signInUser {
     private final ObjectMapper objectMapper;
     
     private final userRepository userRepository;
+    private final apiLogService apiLogService;
 
-    public signInUser(userRepository userRepository, ObjectMapper objectMapper) {
+    public signInUser(userRepository userRepository, ObjectMapper objectMapper, apiLogService apiLogService) {
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
+        this.apiLogService = apiLogService;
     }
 
     public ResponseEntity<JsonNode> validateUser(String email, String password) {
@@ -40,6 +42,9 @@ public class signInUser {
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "Please provide all the fields");
+
+                apiLogService.logApiHit("unknown user", "api/signIn", "Please provide all the fields");
+
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -49,6 +54,9 @@ public class signInUser {
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "User not found");
+
+                apiLogService.logApiHit("unknown user", "api/signIn", "User not found");
+
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -58,6 +66,9 @@ public class signInUser {
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "Invalid password");
+
+                apiLogService.logApiHit("unknown user", "api/signIn", "Invalid password");
+
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -89,6 +100,9 @@ public class signInUser {
                     .put("isSuccess", "true")
                     .put("message", "User logged in successfully")
                     .set("data", loginInfo);
+
+            String userId = user_details.getId();
+            apiLogService.logApiHit(userId, "api/signIn", "User logged in successfully");
             
             return ResponseEntity.ok().headers(header).body(response);
             
@@ -98,6 +112,9 @@ public class signInUser {
                     .put("isSuccess", "false")
                     .put("message", "Internal Server Error")
                     .put("error",e.getMessage());
+
+            apiLogService.logApiHit("unknown user", "api/signIn", "Internal Server Error due to " + e.getMessage());
+            
             return ResponseEntity.internalServerError().body(response);
         }
     }

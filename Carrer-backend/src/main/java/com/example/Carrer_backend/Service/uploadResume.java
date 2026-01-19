@@ -28,13 +28,15 @@ public class uploadResume {
     private final userRepository userRepository;
 
     private final ObjectMapper objectMapper;
+    private final apiLogService apiLogService;
 
     public uploadResume(GeminiService geminiService, resumeRepository resumeRepository, userRepository userRepository,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper, apiLogService apiLogService) {
         this.geminiService = geminiService;
         this.resumeRepository = resumeRepository;
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
+        this.apiLogService = apiLogService;
     }
 
     public ResponseEntity<JsonNode> upload_resume(String userId, MultipartFile resume) {
@@ -44,6 +46,8 @@ public class uploadResume {
                 ObjectNode response = objectMapper.createObjectNode();
                 response.put("isSuccess", "false");
                 response.put("message", "Resume not found");
+
+                apiLogService.logApiHit(userId, "api/auth/resume", "Resume not found");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -51,6 +55,8 @@ public class uploadResume {
                 ObjectNode response = objectMapper.createObjectNode();
                 response.put("isSuccess", "false");
                 response.put("message", "User ID not found");
+
+                apiLogService.logApiHit("unknown user", "api/auth/resume", "User ID not found");
                 return ResponseEntity.badRequest().body(response);
             }
             String fileName = resume.getOriginalFilename();
@@ -59,6 +65,8 @@ public class uploadResume {
                 ObjectNode response = objectMapper.createObjectNode();
                 response.put("isSuccess", "false");
                 response.put("message", "File name not found");
+
+                apiLogService.logApiHit(userId, "api/auth/resume", "File name not found");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -79,6 +87,8 @@ public class uploadResume {
                 response.put("message",
                         "Resume already exists for this user, if you want to update it, please change the file name of the resume then try again");
                 response.set("data", existingResumeData);
+
+                apiLogService.logApiHit(userId, "api/auth/resume", "Resume already exists for this user");
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
             }
 
@@ -93,6 +103,8 @@ public class uploadResume {
                     ObjectNode response = objectMapper.createObjectNode();
                     response.put("isSuccess", "false");
                     response.put("message", "User not found");
+
+                    apiLogService.logApiHit(userId, "api/auth/resume", "invalid user id");
                     return ResponseEntity.badRequest().body(response);
                 }
 
@@ -112,6 +124,8 @@ public class uploadResume {
                 resultMap.put("message", "Resume uploaded successfully");
                 resultMap.set("data", savedResume.getResumeContent());
 
+                apiLogService.logApiHit(userId, "api/auth/resume", "Resume uploaded successfully");
+
                 return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(resultMap);
             }
 
@@ -120,6 +134,8 @@ public class uploadResume {
             response.put("isSuccess", "false");
             response.put("message", "Error uploading resume ");
             response.put("error", e.getMessage());
+
+            apiLogService.logApiHit(userId, "api/auth/resume", "Error uploading resume due to " + e.getMessage());
             return ResponseEntity.internalServerError().body(response);
         }
     }

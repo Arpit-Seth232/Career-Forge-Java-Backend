@@ -18,11 +18,13 @@ public class createMentorProfile {
     private final mentorRepository mentorRepository;
     private final userRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final apiLogService apiLogService;
 
-    public createMentorProfile(mentorRepository mentorRepository, userRepository userRepository, ObjectMapper objectMapper) {
+    public createMentorProfile(mentorRepository mentorRepository, userRepository userRepository, ObjectMapper objectMapper, apiLogService apiLogService) {
         this.mentorRepository = mentorRepository;
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
+        this.apiLogService = apiLogService;
     }
 
     public ResponseEntity<JsonNode> update_mentor_profile(String fullName, String profilePicture, String yearOfMentoring,
@@ -31,6 +33,7 @@ public class createMentorProfile {
         try {
 
             if (fullName == null || yearOfMentoring == null || expertise == null) {
+                apiLogService.logApiHit(userId, "api/auth/mentor/profile", "Please provide all the required fields");
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "Please provide all the required fields");
@@ -38,6 +41,7 @@ public class createMentorProfile {
             }
 
             if (userId == null) {
+                apiLogService.logApiHit(userId, "api/auth/mentor/profile", "User ID not found");
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "User ID not found");
@@ -45,6 +49,7 @@ public class createMentorProfile {
             }
 
             if (expertise.isEmpty()) {
+                apiLogService.logApiHit(userId, "api/auth/mentor/profile", "Please provide at least one expertise");
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "Please provide at least one expertise");
@@ -79,6 +84,8 @@ public class createMentorProfile {
                         .put("yearOfMentoring", savedUser.getYearOfMentoring())
                         .put("bio", savedUser.getBio())
                         .set("expertise", objectMapper.valueToTree(savedUser.getExpertise()));
+
+                        apiLogService.logApiHit(userId, "api/auth/mentor/profile", "Profile completion status updated successfully");
 
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "true")
@@ -116,9 +123,11 @@ public class createMentorProfile {
                         .put("bio", savedUser.getBio())
                         .set("expertise", objectMapper.valueToTree(savedUser.getExpertise()));
 
+                apiLogService.logApiHit(userId, "api/auth/mentor/profile", "New mentor profile created successfully");
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "true")
-                        .put("message", "Profile completion status updated successfully")
+                        .put("message", "New mentor profile created successfully")
                         .set("data", createdUserInfo);
                 return ResponseEntity.ok().body(response);
             }
@@ -126,6 +135,7 @@ public class createMentorProfile {
         } catch (Exception e) {
 
             System.out.println("service error");
+            apiLogService.logApiHit(userId, "api/auth/mentor/profile", "Error updating profile completion status due to " + e.getMessage());
 
             JsonNode response = objectMapper.createObjectNode()
                     .put("isSuccess", "false")

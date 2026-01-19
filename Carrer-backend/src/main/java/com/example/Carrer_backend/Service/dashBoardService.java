@@ -18,6 +18,7 @@ import com.example.Carrer_backend.Repository.userRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 @Service
 public class dashBoardService {
 
@@ -26,14 +27,16 @@ public class dashBoardService {
     private final resumeRepository resumeRepository;
     private final userRepository userRepository;
     private final mentorRepository mentorRepository;
+    private final apiLogService apiLogService;
 
     public dashBoardService(jobseekerRepository jobseekerRepository, ObjectMapper objectMapper,
-            resumeRepository resumeRepository, userRepository userRepository, mentorRepository mentorRepository) {
+            resumeRepository resumeRepository, userRepository userRepository, mentorRepository mentorRepository, apiLogService apiLogService) {
         this.jobseekerRepository = jobseekerRepository;
         this.objectMapper = objectMapper;
         this.resumeRepository = resumeRepository;
         this.userRepository = userRepository;
         this.mentorRepository = mentorRepository;
+        this.apiLogService = apiLogService;
     }
 
     public ResponseEntity<JsonNode> getDash_board(String userId) {
@@ -42,6 +45,7 @@ public class dashBoardService {
 
             if (userId == null) {
 
+                apiLogService.logApiHit(userId, "api/auth/dashboard", "User not found");
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "User not found");
@@ -52,6 +56,7 @@ public class dashBoardService {
 
             Optional<user> user = userRepository.findById(userId);
             if (user.isEmpty()) {
+                apiLogService.logApiHit(userId, "api/auth/dashboard", "User not found");
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
                         .put("message", "User not found");
@@ -66,9 +71,10 @@ public class dashBoardService {
 
                 if (jobseeker.isEmpty()) {
 
+                    apiLogService.logApiHit(userId, "api/auth/dashboard", "jobseeker profile not created for particular userId");
                     JsonNode response = objectMapper.createObjectNode()
                             .put("isSuccess", "false")
-                            .put("message", "User not found");
+                            .put("message", "jobseeker profile not created for particular userId");
 
                     return ResponseEntity.badRequest().body(response);
 
@@ -144,6 +150,8 @@ public class dashBoardService {
                     skillsPresent = true;
                 }
 
+                apiLogService.logApiHit(userId, "api/auth/dashboard", "Dashboard fetched successfully");
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "true")
                         .put("message", "Dashboard fetched successfully")
@@ -162,14 +170,18 @@ public class dashBoardService {
                 return ResponseEntity.ok(response);
 
             } else {
+                apiLogService.logApiHit(userId, "api/auth/dashboard", "dashboard route in progress (only jobseeker can access this route currently)...");
+
                 JsonNode response = objectMapper.createObjectNode()
                         .put("isSuccess", "false")
-                        .put("message", "dashboard route in progress...");
+                        .put("message", "dashboard route in progress (only jobseeker can access this route currently)...");
 
                 return ResponseEntity.badRequest().body(response);
             }
 
         } catch (Exception e) {
+
+            apiLogService.logApiHit(userId, "api/auth/dashboard", "Dashboard not fetched due to " + e.getMessage());
             JsonNode response = objectMapper.createObjectNode()
                     .put("isSuccess", "false")
                     .put("message", "Dashboard not fetched")
