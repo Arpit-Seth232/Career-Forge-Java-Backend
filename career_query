@@ -104,4 +104,33 @@ FOREIGN KEY (user_id)
 
 select * from expertise;
 
+create Table resumes(
+user_id Varchar Not Null,
+file_name Varchar NOT NULL,
+resume_content jsonb NOT NULL,
+created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CONSTRAINT pk_resume
+PRIMARY KEY(user_id,fil)
+);
+
+select * from resumes;
+
+select * from resumes where user_id = 'a660d452-4024-4490-8a1e-990fdfdcaf57';
+
+delete from users where user_id = 'bf299f92-bb6d-4db4-b0db-a2939c20dc08';
+
+create Table apilogs(
+	log_id SERIAL PRIMARY KEY,
+	user_id VARCHAR,
+	api_hit_name Varchar NOT NULL,
+	api_hit_response VARCHAR NOT NULL,
+	api_hit_date DATE DEFAULT CURRENT_DATE NOT NULL,
+	api_hit_time TIME DEFAULT CURRENT_TIME NOT NULL
+);
+
+SELECT * FROM apilogs;
+
+
+
 
