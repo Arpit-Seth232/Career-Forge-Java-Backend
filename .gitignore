@@ -41,4 +41,4 @@ Carrer-backend/nbproject/private/
 ### VS Code ###
 .vscode/
 
-./pythonRagModel/.env
+pythonRagModel/.env
