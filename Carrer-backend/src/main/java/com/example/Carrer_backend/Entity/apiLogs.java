@@ -3,7 +3,6 @@ package com.example.Carrer_backend.Entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.hibernate.annotations.ColumnDefault;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
