@@ -27,13 +27,15 @@ public class ragPipelineService {
     }
 
 
-    public JsonNode hitPipeline(String userId, String jd, JsonNode resumeContent){
+    public JsonNode hitPipeline(String userId, String jd, JsonNode resumeContent, String fileName){
 
         try{
         ObjectNode requestBody = objectMapper.createObjectNode()
         .put("userId", userId)
         .put("jd", jd)
+        .put("fileName", fileName)
         .set("resumeContent", resumeContent);
+        
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

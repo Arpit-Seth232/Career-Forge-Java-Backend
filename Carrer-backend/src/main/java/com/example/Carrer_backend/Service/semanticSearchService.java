@@ -74,11 +74,13 @@ public class semanticSearchService {
 
             JsonNode resumeContent = resumes.get(resumes.size()-1).getResumeContent();
 
+            String fileName = resumes.get(resumes.size()-1).getId().getFileName();
+
             byte[] jdBytes = jd.getBytes();
 
             String encodedJd = Base64.getEncoder().encodeToString(jdBytes);
 
-            JsonNode response = ragPipelineService.hitPipeline(userId,encodedJd, resumeContent);
+            JsonNode response = ragPipelineService.hitPipeline(userId,encodedJd, resumeContent,fileName);
 
             ObjectNode objectNode = objectMapper.createObjectNode()
             .put("isSuccess", "true")
