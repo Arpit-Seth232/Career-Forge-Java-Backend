@@ -1,9 +1,9 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from fastapi import FastAPI
 from app.routes.rag import router as rag_router
-from dotenv import load_dotenv
 import os
-
-load_dotenv()
 
 app = FastAPI(title="Career Forge RAG Model API")
 
