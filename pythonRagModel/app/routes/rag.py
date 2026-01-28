@@ -41,6 +41,29 @@ def extract_text_from_base64_pdf(base64_str: str) -> str:
         print(f"Error extracting text from JD PDF: {e}")
         return base64_str # Fallback to original
 
+def extract_jd_details(jd_text: str):
+    """Passes JD text to Gemini to get JD details in JSON format."""
+    prompt = f"""
+    Extract all details from this Job Description and return it in a structured JSON format.
+    Include fields like job_title, company, location, requirements, responsibilities, skills, experience_required, etc.
+    
+    Job Description:
+    {jd_text}
+    
+    Return ONLY a valid JSON object.
+    """
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+        text = response.text.strip()
+        json_str = extract_json_from_text(text)
+        return json.loads(json_str)
+    except Exception as e:
+        print(f"Error extracting JD details with Gemini: {e}")
+        return None
+
 SIMILARITY_THRESHOLD = 0.75
 
 
@@ -81,10 +104,11 @@ async def analyze_resume(user_id, jd, resume_json,file_name):
 
         # -------- JD embedding --------
         jd_hash = get_jd_hash(jd)
-        jd_embedding = get_jd_embedding(jd_hash)
+        jd_embedding, jd_content = get_jd_embedding(jd_hash)
         if not jd_embedding:
             jd_embedding = get_embedding(jd)
-            save_jd_embedding(jd_hash, jd_embedding)
+            jd_content = extract_jd_details(jd)
+            save_jd_embedding(jd_hash, jd_embedding, jd_content)
 
         # -------- Similarity --------
         similarity = sum(
