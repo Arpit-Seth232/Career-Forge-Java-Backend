@@ -44,27 +44,32 @@ def get_jd_embedding(jd_hash: str):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT embedding FROM jd_embeddings WHERE jd_hash = %s",
+        "SELECT embedding, jd_content FROM jd_embeddings WHERE jd_hash = %s",
         (jd_hash,)
     )
     result = cursor.fetchone()
     cursor.close()
     conn.close()
     
-    val = result[0] if result else None
+    if not result:
+        return None, None
+    
+    val, jd_content = result
     if val is None:
-        return None
+        return None, jd_content
+    
     if isinstance(val, str):
         val = val.strip("[]{}").split(",")
-    return [float(x) for x in val]
+    return [float(x) for x in val], jd_content
 
 
-def save_jd_embedding(jd_hash: str, embedding):
+def save_jd_embedding(jd_hash: str, embedding, jd_content):
     conn = get_connection()
     cursor = conn.cursor()
+    import json
     cursor.execute(
-        "INSERT INTO jd_embeddings (jd_hash, embedding) VALUES (%s, %s)",
-        (jd_hash, embedding)
+        "INSERT INTO jd_embeddings (jd_hash, embedding, jd_content) VALUES (%s, %s, %s)",
+        (jd_hash, embedding, json.dumps(jd_content) if jd_content else None)
     )
     conn.commit()
     cursor.close()

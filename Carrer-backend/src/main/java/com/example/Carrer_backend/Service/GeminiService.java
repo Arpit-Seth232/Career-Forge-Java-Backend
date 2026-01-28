@@ -164,5 +164,6 @@ public class GeminiService {
             e.printStackTrace();
             throw new RuntimeException("Error: " + e.getMessage());
         }
-    }
+    }  
+
 }
