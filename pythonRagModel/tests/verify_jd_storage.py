@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 load_dotenv()
 
 from app.services.vectorStore import save_jd_embedding, get_jd_embedding, get_jd_hash
-from app.routes.rag import extract_jd_details
+from app.services.atsAnalyzer import extract_jd_details
 from app.services.embeddings import get_embedding
 
 def test_jd_storage():
