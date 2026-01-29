@@ -14,6 +14,7 @@ from app.services.vectorStore import (
 )
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+SIMILARITY_THRESHOLD = 0.8
 
 def extract_json_from_text(text: str) -> str:
     """Extracts JSON content between the first { and last }."""
@@ -38,7 +39,6 @@ def extract_text_from_base64_pdf(base64_str: str) -> str:
         print(f"Error extracting text from JD PDF: {e}")
         return base64_str # Fallback to original
 
-SIMILARITY_THRESHOLD = 0.8
 
 
 def cosine_similarity(v1, v2):
