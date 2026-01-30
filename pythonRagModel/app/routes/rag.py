@@ -1,5 +1,4 @@
 import os
-
 from app.services.atsAnalyzer import  analyze_resume
 from google import genai
 from fastapi import APIRouter, Request
