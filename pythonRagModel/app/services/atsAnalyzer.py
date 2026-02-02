@@ -14,6 +14,7 @@ from app.services.vectorStore import (
 )
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+SIMILARITY_THRESHOLD = 0.8
 
 def extract_json_from_text(text: str) -> str:
     """Extracts JSON content between the first { and last }."""
@@ -38,7 +39,6 @@ def extract_text_from_base64_pdf(base64_str: str) -> str:
         print(f"Error extracting text from JD PDF: {e}")
         return base64_str # Fallback to original
 
-SIMILARITY_THRESHOLD = 0.75
 
 
 def cosine_similarity(v1, v2):
@@ -46,6 +46,27 @@ def cosine_similarity(v1, v2):
     mag1 = sum(a * a for a in v1) ** 0.5
     mag2 = sum(b * b for b in v2) ** 0.5
     return dot / (mag1 * mag2)
+
+def extract_jd_details(jd_text: str):
+    """Passes JD text to Gemini to get JD details in JSON format."""
+
+    prompt_path = os.path.join(os.path.dirname(__file__), '..', 'prompts', 'jdDetailsExtractionPrompt.txt')
+    with open(prompt_path, 'r', encoding='utf-8') as f:
+        prompt_template = f.read()
+        
+    prompt = prompt_template.format(jd_text=jd_text)
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+        text = response.text.strip()
+        json_str = extract_json_from_text(text)
+        return json.loads(json_str)
+    except Exception as e:
+        print(f"Error extracting JD details with Gemini: {e}")
+        return None
 
 
 async def analyze_resume(user_id: str, jd: str, resume_json: dict):
@@ -81,18 +102,12 @@ async def analyze_resume(user_id: str, jd: str, resume_json: dict):
         }
 
     # ---------- Gemini ----------
-    prompt = f"""
-    Analyze the resume against the job description.
-
-    Resume:
-    {resume_text}
-
-    Job Description:
-    {jd}
-
-    Return ONLY a JSON object with these keys:
-    ats_score, missing_skills, weak_points, suggestions, recommendations
-    """
+    prompt_path = os.path.join(os.path.dirname(__file__), '..', 'prompts', 'atsPrompt.txt')
+    with open(prompt_path, 'r', encoding='utf-8') as f:
+        prompt_template = f.read()
+        
+    # Format prompt with actual JD and resume
+    prompt = prompt_template.format(jd=jd, resume=resume_text)
 
     response = client.models.generate_content(
         model="gemini-2.5-flash",
