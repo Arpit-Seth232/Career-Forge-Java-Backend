@@ -4,7 +4,6 @@ load_dotenv()
 from fastapi import FastAPI
 from app.routes.rag import router as rag_router
 from app.routes.search import router as search_router
-import os
 
 app = FastAPI(title="Career Forge RAG Model API")
 
